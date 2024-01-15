@@ -28,6 +28,8 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 
+The data was gathered from OpenDataToronto (see @citeOpenDataToronto) and analyzed using R (@citeR). Data was cleaned using janitor (@citeJanitor).
+
 ```{r}
 #### Simulate data ####
 set.seed(42)
