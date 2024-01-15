@@ -1,13 +1,10 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
-author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+title: "Analyzing Major Crime Reports in Toronto over the years"
+author: Allen Uy
+thanks: "Code and data are available at: https://github.com/varygx/TorontoMajorCrime"
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: Prototype of Term Paper 1. Reports of major crime in Toronto reached a peak in 2023. Based on analysis of data from OpenDataToronto there has been a steady increase of major crime reports since data collection in 2014.
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -17,205 +14,101 @@ bibliography: references.bib
 #| include: false
 #| warning: false
 #| message: false
-
-library(tidyverse)
-library(palmerpenguins)
+#### Workspace setup ####
+library("tidyverse")
+library("janitor")
+library("opendatatoronto")
 ```
-
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. 
+Basically a single Quarto doc of my scripts I'm likely using with modification for Term Paper 1 for Mini-essay #2 for easy code review. Major crime indicators are listed as: assault, auto theft, break and enter, homicide, robbery, sexual violation, and theft over.
 
 The remainder of this paper is structured as follows. @sec-data....
 
-
-
 # Data {#sec-data}
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
-
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
+#### Simulate data ####
+set.seed(42)
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("outputs/data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
-
-Talk way more about it. 
-
-
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
-
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("outputs/models/first_model.rds"))
-```
-
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
-
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
+sim_data <- tibble(
+  report_id = c(1:100),
+  report_year = sample(2013:2023, 100, replace=TRUE)
 )
 ```
 
+```{r, include=FALSE}
+#### Download data ####
+package <- show_package("major-crime-indicators")
 
+resources <- list_package_resources("major-crime-indicators")
 
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
 
-# Discussion
+data <- filter(datastore_resources, row_number()==2) |> get_resource()
 
-## First discussion point {#sec-first-point}
+#### Save data ####
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+write_csv(data, "../../inputs/data/raw_data.csv")
+```
 
 ```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+#### Clean data ####
+raw_data <- read_csv("../../inputs/data/raw_data.csv")
 
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
+cleaned_data <- clean_names(raw_data)
 
-posterior_vs_prior(first_model) +
+cleaned_data <- cleaned_data |> select("report_year")
+
+#### Save data ####
+write_csv(cleaned_data, "../../outputs/data/analysis_data.csv")
+```
+
+```{r}
+#### Test data ####
+cleaned_data <- read_csv("../../outputs/data/analysis_data.csv")
+cleaned_data$report_year |> min() == 2014
+cleaned_data$report_year |> max() == 2023
+```
+
+# Results
+
+```{r}
+#### Visualize data ####
+cleaned_data |> ggplot(aes(x=report_year)) +
+  geom_bar() +
   theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
+  labs(x = "Year", y = "Number of Reports")
 ```
 
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+We can see a steady rise in reports from 2014 to 2019 with a sudden decrease in 2020. This lines up with the COVID pandemic and gives a plausible explanation as less people were likely to be outside. Below is a graph that extrapolates data for 2020 to 2022 based on a linear model fitted to 2014 to 2019 data.
 
 ```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
+year_count <- cleaned_data |> count(report_year)
+pre_covid <- year_count |> filter(report_year <= 2019)
+fit <- lm(n ~ report_year, data = pre_covid)
 
-plot(first_model, "trace")
+predicted_years <- tibble(report_year = c(2020:2022))
+predicted_counts <- predict(fit, newdata=predicted_years, type="response")
+predicted_data <- tibble(report_year = predicted_years$report_year, n=predicted_counts)
 
-plot(first_model, "rhat")
+extrapolated_data <- year_count |>
+  mutate(n = ifelse(report_year %in% predicted_data$report_year, predicted_data$n, n))
+
+extrapolated_data |> ggplot(aes(x=report_year, y=n)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(x = "Year", y = "Number of Reports")
 ```
 
-
-
 \newpage
-
 
 # References
 
-
+```{r, include=FALSE, echo=FALSE}
+citation()
+citation("tidyverse")
+citation("janitor")
+citation("opendatatoronto")
+```

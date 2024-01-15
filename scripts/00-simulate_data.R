@@ -1,19 +1,20 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Simulates a dataset of Major Crime reports from 2014 to 2023
+# Author: Allen Uy
+# Date: 16 January
+# Contact: allen.uy@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
+# Pre-requisites: Relevant libraries are installed
 
 #### Workspace setup ####
-library(tidyverse)
-# [...UPDATE THIS...]
+library("tidyverse")
+
 
 #### Simulate data ####
-# [...ADD CODE HERE...]
+set.seed(42)
 
-
+sim_data <- tibble(
+  report_id = c(1:100),
+  report_year = sample(2013:2023, 100, replace=TRUE)
+)
 

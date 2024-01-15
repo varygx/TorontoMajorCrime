@@ -1,15 +1,17 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Test and validate dataset
+# Author: Allen Uy
+# Date: 16 January
+# Contact: allen.uy@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Cleaned data CSV has been downloaded
 
 
 #### Workspace setup ####
-library(tidyverse)
-# [...UPDATE THIS...]
+library("tidyverse")
+
 
 #### Test data ####
+cleaned_data <- read_csv("outputs/data/analysis_data.csv")
+cleaned_data$report_year |> min() == 2014
+cleaned_data$report_year |> max() == 2023
