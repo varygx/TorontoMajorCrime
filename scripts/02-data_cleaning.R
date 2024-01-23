@@ -15,7 +15,7 @@ raw_data <- read_csv("inputs/data/raw_data.csv")
 
 cleaned_data <- clean_names(raw_data)
 
-cleaned_data <- cleaned_data |> select("report_year")
+cleaned_data <- cleaned_data |> select("report_year", "report_month", "premises_type", "location_type", "mci_category", "hood_158", "neighbourhood_158")
 
 #### Save data ####
 write_csv(cleaned_data, "outputs/data/analysis_data.csv")
