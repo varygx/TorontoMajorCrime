@@ -24,11 +24,11 @@ cleaned_data = read.csv(here::here("outputs/data/analysis_data.csv"))
 
 # Introduction
 
-I remember how surreal it was back in 2012 when I was walking in the Eaton Centre to see a large crowd of people running from the lower food court and up the stairs. There's a feeling of confusion that one couldn't explain unless you actually experienced it. The Eaton Centre shooting is thankfully one of the only large incidents that has occurred in Toronto, with the only other one I recall being the Danforth shooting (@citeShooting). However, in recent years I find myself being much more aware of my surroundings and wondering if Toronto isn't as safe as it used to be. Some TTC riders definitely feel that way (@citeThoughts). Just shortly into 2024 I was taking the TTC myself and train service was halted. My friend told me there was a passenger with a gun on his train asking for change. There was even a stabbing at a station later that same day (@citeStabbing). Another friend of mine had their car stolen in 2023, when Ontario reached a new peak in the number of auto thefts reported (@citeAutoTheft).
+The Eaton Centre shooting is one of the only large incidents that has occurred in Toronto's modern history, with the other major one being the Danforth shooting (@citeShooting). While tragedies like those are thankfully few and far between, in recent years people may find themselves much more aware of their surroundings and wondering if Toronto isn't as safe as it used to be. Some TTC riders definitely feel that way (@citeThoughts). Just shortly into 2024 TTC train service was halted amidst reports of a passenger with a gun on a train asking for change. There was even a stabbing at a station later that same day (@citeStabbing). Car owners also find themselves more cautious as Ontario reached a new peak in the number of auto thefts reported (@citeAutoTheft) in 2023.
 
 Toronto Police Services classifies Major Crime Indicators (MCI) as: assault, auto theft, break and enter, homicide, robbery, sexual violation, and theft over. In this paper we use a dataset containing MCI reports to analyze the amount of crime in Toronto over the years, where these crimes are happening, what kinds of crime are happening, and a bit of insight into the relationship between the COVID pandemic and crime.
 
-To answer these questions, the paper is divided into the following sections: Data, Results, Discussion, and Conclusion. The Data section describes the data source, variables of interest, and a bit of the data cleaning process. The Results section shares the graphs and trends we were able to construct from the data. The Discussion section highlights insights and next steps. The Conclusion sections summarizes the findings of this paper.
+To answer these questions, the paper is divided into the following sections: Data, Results, and Conclusion. The Data section describes the data source, variables of interest, and a bit of the data cleaning process. The Results section shares the graphs and trends we were able to construct from the data. The Conclusion sections summarizes the findings of this paper and discusses next steps.
 
 This paper finds a year over year increase in MCI reports throughout 2014 to 2019, with a decrease in reports during 2020 and 2021 correlating with the COVID Pandemic before reaching a peak in 2023. Among all MCI categories, Auto Theft has seen a sharp rise, the number of reports doubling in recent years. Finally, the number of robberies and assaults on TTC premises has seen a steady increase since 2014.
 
@@ -38,7 +38,7 @@ The data used in this paper was gathered from the City of Toronto's Open Data Po
 
 ## Major Crime Indicators
 
-The dataset in question is published by Toronto Police Services and is refreshed quarterly (@citeData). The data used for this paper was captured on January 11, 2024 and goes back to 2014. Reports in the dataset do not include ones that were deemed unfounded. According to Statistics Canada this means: "It has been determined through police investigation that the offence reported did not occur, nor was it attempted" (@citeFounded).
+The dataset in question is published by Toronto Police Services and is refreshed quarterly (@citeData). The data used for this paper was captured on January 11, 2024 and goes back to 2014. The dataset includes 372899 reports. Reports in the dataset do not include ones that were deemed unfounded. According to Statistics Canada this means: "It has been determined through police investigation that the offence reported did not occur, nor was it attempted" (@citeFounded).
 
 ```{r, echo=FALSE}
 #| label: tbl-cleaned_report_data
@@ -63,7 +63,7 @@ Two different dates were given for a report: the report date and the incident da
 cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=mci_category)) +
   geom_bar() +
   theme_minimal() +
-  labs(title = "Total Reports per Year with MCI Categories",
+  labs(title = "Total Reports of Major Crime per Year with MCI Categories",
        x = "Year",
        y = "Number of Reports") +
   geom_text(aes(label = after_stat(count)),
@@ -74,7 +74,7 @@ cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=mci_category)) +
   guides(fill = guide_legend(title = "MCI Category"))
 ```
 
-Based on @fig-total_reports_category, the year 2023 sees a peak of nearly 50000 MCI reports. We can see a steady rise in reports from 2014 to 2019 with a decrease in reports during 2020 and 2021. This lines up with the COVID pandemic and gives a plausible explanation as less people were likely to be outside.
+Based on @fig-total_reports_category, the year 2023 sees a peak of nearly 50000 MCI reports. We can see a steady rise in MCI reports from 2014 to 2019 with a decrease in reports during 2020 and 2021. This lines up with the COVID pandemic and gives a plausible explanation as less people were likely to interact with others at the time.
 
 ```{r, echo=FALSE}
 #| label: fig-total_reports_premises
@@ -82,7 +82,7 @@ Based on @fig-total_reports_category, the year 2023 sees a peak of nearly 50000 
 cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=premises_type)) +
   geom_bar() +
   theme_minimal() +
-  labs(title = "Total Reports per Year with Premises Type",
+  labs(title = "Total Reports of Major Crime per Year with Premises Type",
        x = "Year",
        y = "Number of Reports") +
   geom_text(aes(label = after_stat(count)),
@@ -93,13 +93,15 @@ cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=premises_type)) +
   guides(fill = guide_legend(title = "Premises Type"))
 ```
 
-If we instead look at the reports per year with premises type (see @fig-total_reports_premises) we see that there are less outside reports in 2020 and 2021 compared to previous year
+If we instead look at the MCI reports per year with premises type (see @fig-total_reports_premises) we see that there are less MCI reports in 2020 and 2021 where the incident occurred outside compared to previous years.
 
 ## Reports during COVID
 
 ```{r, echo=FALSE}
-#| label: fig-2020_reports
-#| fig-cap: MCI Reports in 2020 by Month
+#| label: fig-monthly_reports
+#| fig-cap: MCI Reports in 2020-2022 by Month
+#| fig-subcap: ["MCI Reports in 2020", "MCI Reports in 2021", "MCI Reports in 2022"]
+#| layout-ncol: 2
 year_2020_reports <- cleaned_data |> filter(report_year == 2020)
 
 year_2020_reports$report_month <- factor(year_2020_reports$report_month, levels = month.name)
@@ -107,14 +109,10 @@ year_2020_reports$report_month <- factor(year_2020_reports$report_month, levels 
 year_2020_reports |> ggplot(aes(x=report_month)) +
   geom_bar() +
   theme_minimal() +
-  labs(title = "Reports in 2020", x = "Month", y = "Number of Reports") +
+  labs(title = "MCI Reports in 2020", x = "Month", y = "Number of Reports") +
   geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white") +
   scale_x_discrete(guide = guide_axis(n.dodge=2))
-```
 
-```{r, echo=FALSE}
-#| label: fig-2021_reports
-#| fig-cap: MCI Reports in 2021 by Month
 year_2021_reports <- cleaned_data |> filter(report_year == 2021)
 
 year_2021_reports$report_month <- factor(year_2021_reports$report_month, levels = month.name)
@@ -122,14 +120,10 @@ year_2021_reports$report_month <- factor(year_2021_reports$report_month, levels 
 year_2021_reports |> ggplot(aes(x=report_month)) +
   geom_bar() +
   theme_minimal() +
-  labs(title = "Reports in 2021", x = "Month", y = "Number of Reports") +
+  labs(title = "MCI Reports in 2021", x = "Month", y = "Number of Reports") +
   geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white") +
   scale_x_discrete(guide = guide_axis(n.dodge=2))
-```
 
-```{r, echo=FALSE}
-#| label: fig-2022_reports
-#| fig-cap: MCI Reports in 2022 by Month
 year_2022_reports <- cleaned_data |> filter(report_year == 2022)
 
 year_2022_reports$report_month <- factor(year_2022_reports$report_month, levels = month.name)
@@ -137,29 +131,12 @@ year_2022_reports$report_month <- factor(year_2022_reports$report_month, levels 
 year_2022_reports |> ggplot(aes(x=report_month)) +
   geom_bar() +
   theme_minimal() +
-  labs(title = "Reports in 2022", x = "Month", y = "Number of Reports") +
+  labs(title = "MCI Reports in 2022", x = "Month", y = "Number of Reports") +
   geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white") +
   scale_x_discrete(guide = guide_axis(n.dodge=2))
 ```
 
-We can see a downwards trend in the number of reports in 2020 over the months as illustrated by @fig-2020_reports. We can also see an upwards trend in @fig-2021_reports and @fig-2022_reports as the city begins to recover from the pandemic.
-
-```{r, include=FALSE, echo=FALSE}
-# TODO: compare with peaks of covid. Found graphs that match up online but want to recreate in R
-# out of scope for now
-total_range <- merge(year_2020_reports, year_2021_reports, all=TRUE) |> merge(year_2022_reports, all=TRUE)
-total_range <- total_range |> mutate(date = ym(paste(total_range$report_year, total_range$report_month)))
-
-datebreaks <- seq(as.Date("2020-01-01"), as.Date("2022-12-01"), by = "2 month")
-
-total_range |> ggplot(aes(x=date)) +
-  geom_bar() +
-  theme_minimal() +
-  labs(title = "MCI Reports from 2020 to 2022", x = "Date", y = "Number of Reports") +
-  scale_x_date(breaks = datebreaks, labels = date_format("%b %Y")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_vline(xintercept = ym("20"))
-```
+We can see a downwards trend in the number of MCI reports in 2020 over the months as illustrated by @fig-monthly_reports. We can also see an upwards trend in 2021 and 2022 as the city begins to recover from the pandemic. However, we do not prove any correlation between the two and leave it as a plausible explanation.
 
 ## TTC Incidents per Year
 
@@ -172,7 +149,7 @@ ttc_reports <- cleaned_data |> filter(grepl("Ttc", location_type, ignore.case = 
 ttc_reports |> ggplot(aes(x=as.factor(report_year), fill=premises_type)) +
   geom_bar() +
   theme_minimal() +
-  labs(title = "TTC Incidents per Year", x = "Year", y = "Number of Reports") +
+  labs(title = "Major Crime reports on the TTC per Year", x = "Year", y = "Number of Reports") +
   geom_text(aes(label = after_stat(count)),
             stat = "count",
             position = position_stack(vjust = 0.5),
@@ -180,7 +157,7 @@ ttc_reports |> ggplot(aes(x=as.factor(report_year), fill=premises_type)) +
   guides(fill = guide_legend(title = "Premises Type"))
 ```
 
-According to @fig-ttc_reports, the number of MCIs reported on the TTC has more than doubled since 2014 and has seen almost a 50% increase since 2020. The outside premises type refers to a bus stop, shelter, or loop for the TTC.
+According to @fig-ttc_reports, the number of MCIs reported on the TTC has increased by 132% since 2014 and has seen a 53% increase since 2020. The outside premises type refers to a bus stop, shelter, or loop for the TTC.
 
 ## Auto Theft Incidents per Year
 
@@ -196,15 +173,11 @@ auto_reports |> ggplot(aes(x=as.factor(report_year))) +
   geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white")
 ```
 
-Even more extreme than the increase in TTC reports is the increase in Auto Theft seen in @fig-auto_theft_reports. When looking at @fig-total_reports_category Auto Theft is now the second most frequent crime, behind assault, and has quadrupled since 2014.
-
-# Discussion
-
-TODO
+Even more extreme than the increase in TTC reports is the increase in Auto Theft seen in @fig-auto_theft_reports. When looking at @fig-total_reports_category Auto Theft is now the second most frequent crime, behind assault. The report rate for Auto Theft has increased by 235% since 2014 and increased by 110% since 2020.
 
 # Conclusion
 
-TODO
+This paper finds a concerning rise in the number of major crime reports in Toronto, particularly over the last 5 years. Even with the City of Toronto's increasing population, the crime report rate is increasing faster than the population based on the last census data (@citePopulation). Riders on the TTC should exercise caution and car owners should take precautions. Increasing police presence may be one solution, at least on the TTC, but the city should look into social support policies and programs. More analysis on the effect of the COVID pandemic and crime reports could be done in the future, as well as examining geographic data.
 
 \newpage
 
