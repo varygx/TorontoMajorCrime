@@ -58,7 +58,7 @@ Two different dates were given for a report: the report date and the incident da
 
 ```{r, echo=FALSE}
 #| label: fig-total_reports_category
-#| fig-cap: Total reports per year with MCI Category
+#| fig-cap: Total reports of crime in Toronto per year with MCI Category
 
 cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=mci_category)) +
   geom_bar() +
@@ -70,7 +70,7 @@ cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=mci_category)) +
             stat = "count",
             position = position_stack(vjust = 0.5),
             colour = "white",
-            size=3) +
+            size=2) +
   guides(fill = guide_legend(title = "MCI Category"))
 ```
 
@@ -78,7 +78,7 @@ Based on @fig-total_reports_category, the year 2023 sees a peak of nearly 50000 
 
 ```{r, echo=FALSE}
 #| label: fig-total_reports_premises
-#| fig-cap: Total reports per year with Premises Type
+#| fig-cap: Total reports of crime in Toronto  per year with Premises Type
 cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=premises_type)) +
   geom_bar() +
   theme_minimal() +
@@ -89,7 +89,7 @@ cleaned_data |> ggplot(aes(x=as.factor(report_year), fill=premises_type)) +
             stat = "count",
             position = position_stack(vjust = 0.5),
             colour = "white",
-            size=3) +
+            size=2) +
   guides(fill = guide_legend(title = "Premises Type"))
 ```
 
@@ -99,7 +99,7 @@ If we instead look at the reports per year with premises type (see @fig-total_re
 
 ```{r, echo=FALSE}
 #| label: fig-2020_reports
-#| fig-cap: MCI Reports in 2020
+#| fig-cap: MCI Reports in 2020 by Month
 year_2020_reports <- cleaned_data |> filter(report_year == 2020)
 
 year_2020_reports$report_month <- factor(year_2020_reports$report_month, levels = month.name)
@@ -114,7 +114,7 @@ year_2020_reports |> ggplot(aes(x=report_month)) +
 
 ```{r, echo=FALSE}
 #| label: fig-2021_reports
-#| fig-cap: MCI Reports in 2021
+#| fig-cap: MCI Reports in 2021 by Month
 year_2021_reports <- cleaned_data |> filter(report_year == 2021)
 
 year_2021_reports$report_month <- factor(year_2021_reports$report_month, levels = month.name)
@@ -129,7 +129,7 @@ year_2021_reports |> ggplot(aes(x=report_month)) +
 
 ```{r, echo=FALSE}
 #| label: fig-2022_reports
-#| fig-cap: MCI Reports in 2022
+#| fig-cap: MCI Reports in 2022 by Month
 year_2022_reports <- cleaned_data |> filter(report_year == 2022)
 
 year_2022_reports$report_month <- factor(year_2022_reports$report_month, levels = month.name)
@@ -146,6 +146,7 @@ We can see a downwards trend in the number of reports in 2020 over the months as
 
 ```{r, include=FALSE, echo=FALSE}
 # TODO: compare with peaks of covid. Found graphs that match up online but want to recreate in R
+# out of scope for now
 total_range <- merge(year_2020_reports, year_2021_reports, all=TRUE) |> merge(year_2022_reports, all=TRUE)
 total_range <- total_range |> mutate(date = ym(paste(total_range$report_year, total_range$report_month)))
 
@@ -164,7 +165,7 @@ total_range |> ggplot(aes(x=date)) +
 
 ```{r, echo=FALSE}
 #| label: fig-ttc_reports
-#| fig-cap: TTC Incidents per year
+#| fig-cap: TTC Incident Reports per year with Premises Type
 
 ttc_reports <- cleaned_data |> filter(grepl("Ttc", location_type, ignore.case = TRUE))
 
