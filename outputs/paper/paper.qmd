@@ -26,9 +26,11 @@ cleaned_data = read.csv(here::here("outputs/data/analysis_data.csv"))
 
 I remember how surreal it was back in 2012 when I was walking in the Eaton Centre to see a large crowd of people running from the lower food court and up the stairs. There's a feeling of confusion that one couldn't explain unless you actually experienced it. The Eaton Centre shooting is thankfully one of the only large incidents that has occurred in Toronto, with the only other one I recall being the Danforth shooting (@citeShooting). However, in recent years I find myself being much more aware of my surroundings and wondering if Toronto isn't as safe as it used to be. Some TTC riders definitely feel that way (@citeThoughts). Just shortly into 2024 I was taking the TTC myself and train service was halted. My friend told me there was a passenger with a gun on his train asking for change. There was even a stabbing at a station later that same day (@citeStabbing). Another friend of mine had their car stolen in 2023, when Ontario reached a new peak in the number of auto thefts reported (@citeAutoTheft).
 
-Toronto Police Services classifies Major Crime Indicators (MCI) as: assault, auto theft, break and enter, homicide, robbery, sexual violation, and theft over. In this paper I use a dataset containing MCI reports to analyze the amount of crime in Toronto over the years, where these crimes are happening, what kinds of crime are happening, and a bit of insight into the relationship between the COVID pandemic and crime.
+Toronto Police Services classifies Major Crime Indicators (MCI) as: assault, auto theft, break and enter, homicide, robbery, sexual violation, and theft over. In this paper we use a dataset containing MCI reports to analyze the amount of crime in Toronto over the years, where these crimes are happening, what kinds of crime are happening, and a bit of insight into the relationship between the COVID pandemic and crime.
 
 To answer these questions, the paper is divided into the following sections: Data, Results, Discussion, and Conclusion. The Data section describes the data source, variables of interest, and a bit of the data cleaning process. The Results section shares the graphs and trends we were able to construct from the data. The Discussion section highlights insights and next steps. The Conclusion sections summarizes the findings of this paper.
+
+This paper finds a year over year increase in MCI reports throughout 2014 to 2019, with a decrease in reports during 2020 and 2021 correlating with the COVID Pandemic before reaching a peak in 2023. Among all MCI categories, Auto Theft has seen a sharp rise, the number of reports doubling in recent years. Finally, the number of robberies and assaults on TTC premises has seen a steady increase since 2014.
 
 # Data
 
@@ -194,6 +196,8 @@ auto_reports |> ggplot(aes(x=as.factor(report_year))) +
 ```
 
 Even more extreme than the increase in TTC reports is the increase in Auto Theft seen in @fig-auto_theft_reports. When looking at @fig-total_reports_category Auto Theft is now the second most frequent crime, behind assault, and has quadrupled since 2014.
+
+# Discussion
 
 # Conclusion
 
